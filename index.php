@@ -7,4 +7,3 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 echo json_encode([
     "message" => "Lorem ipsum dolor"
 ]);
-
