@@ -1,13 +1,12 @@
 <?php
 
-class Pizza {
+class Bebidas {
  
     private $conn;
-    private $tabela = "pizzas";
- 
-    public $idPizza;
+    private $tabela = "bebidas";
+    public $idBebidas;
     public $nome;
-    public $ingredientes;
+    public $litros;
     public $valor;
  
     public function __construct($db) {
@@ -18,7 +17,7 @@ class Pizza {
     public function getall(){
 
         // consulta SQL para selecionar os campos idPizza, nome, ingredientes e valor da tabela de pizzas
-        $query ="SELECT idPizza, nome, ingredientes, valor FROM " . $this->tabela;
+        $query ="SELECT idBebidas, nome, litros, valor FROM " . $this->tabela;
         // prepara a consulta SQL usando a conexão com o banco de dados e executa a consulta, retornando o resultado
         $stmt = $this->conn->prepare($query);
         // executa a consulta SQL preparada
@@ -29,23 +28,23 @@ class Pizza {
 
 // método para obter uma pizza específica do banco de dados com base no idPizza
 public function get() {
-    $query = "SELECT idPizza, nome, ingredientes, valor 
+    $query = "SELECT idBebidas, nome, litros, valor 
     FROM " . $this->tabela . " 
-    WHERE idPizza = ? 
+    WHERE idBebidas = ? 
     LIMIT 1";
 
     // prepara a consulta SQL usando a conexão com o banco de dados, vinculando o parâmetro idPizza à consulta, executando a consulta e retornando a linha resultante como um array associativo
     $stmt = $this->conn->prepare($query);
     // vincula o valor da propriedade idPizza ao primeiro parâmetro da consulta SQL usando o método bindParam, que é uma forma segura de passar valores para a consulta e evitar ataques de injeção de SQL
-    $stmt->bindParam(1, $this->idPizza);
+    $stmt->bindParam(1, $this->idBebidas);
     // executa a consulta SQL preparada
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($row) {
-        $this->idPizza = $row['idPizza'];
+        $this->idBebidas = $row['idBebidas'];
         $this->nome = $row['nome'];
-        $this->ingredientes = $row['ingredientes'];
+        $this->litros = $row['litros'];
         $this->valor = $row['valor'];
     }
 
@@ -53,35 +52,35 @@ public function get() {
 }
 
     public function create() {
-        $query = "INSERT INTO " . $this->tabela . " (nome, ingredientes, valor) VALUES (:nome, :ingredientes, :valor)";
+        $query = "INSERT INTO " . $this->tabela . " (nome, litros, valor) VALUES (:nome, :litros, :valor)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(':nome', $this->nome);
-        $stmt->bindValue(':ingredientes', $this->ingredientes);
+        $stmt->bindValue(':litros', $this->litros);
         $stmt->bindValue(':valor', $this->valor);
         if (!$stmt->execute()) {
             return false;
         }
-        $this->idPizza = $this->conn->lastInsertId();
+        $this->idBebidas = $this->conn->lastInsertId();
         return true;
     }
 
     public function update() {
         $query = "UPDATE " . $this->tabela . "
-            SET nome = :nome, ingredientes = :ingredientes, valor = :valor
-            WHERE idPizza = :id";
+            SET nome = :nome, litros = :litros, valor = :valor
+            WHERE idBebidas = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(':nome', $this->nome);
-        $stmt->bindValue(':ingredientes', $this->ingredientes);
+        $stmt->bindValue(':litros', $this->litros);
         $stmt->bindValue(':valor', $this->valor);
-        $stmt->bindValue(':id', $this->idPizza);
+        $stmt->bindValue(':id', $this->idBebidas);
         $stmt->execute();
         return $stmt->rowCount() > 0;
     }
 
     public function delete() {
-        $query = "DELETE FROM " . $this->tabela . " WHERE idPizza = ? LIMIT 1";
+        $query = "DELETE FROM " . $this->tabela . " WHERE idBebidas = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->idPizza);
+        $stmt->bindParam(1, $this->idBebidas);
         $stmt->execute();
         return $stmt->rowCount() > 0;
     }
