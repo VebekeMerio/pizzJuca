@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PizzJuca — CRUD & pedido</title>
+  <style>
+    :root {
+      font-family: system-ui, sans-serif;
+      color: #1a1a1a;
+      background: #faf7f2;
+    }
+    body { max-width: 820px; margin: 0 auto; padding: 1.25rem 1.5rem 2.5rem; }
+    h1 { font-size: 1.45rem; margin-bottom: 0.2rem; }
+    .sub { color: #666; margin: 0 0 1rem; font-size: 0.9rem; }
+    a { color: #c41e3a; }
+    .tabs {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .tabs button {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .tabs button.active {
+      background: #c41e3a;
+      color: #fff;
+      border-color: #c41e3a;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    section.box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    }
+    h2 { font-size: 1.05rem; margin: 0 0 0.75rem; border-bottom: 2px solid #eee; padding-bottom: 0.35rem; }
+    label { display: block; font-size: 0.8rem; color: #555; margin: 0.5rem 0 0.2rem; }
+    input, textarea, select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 0.5rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font: inherit;
+    }
+    textarea { min-height: 4rem; resize: vertical; }
+    .row { display: grid; gap: 0.75rem; }
+    @media (min-width: 560px) {
+      .row.cols-2 { grid-template-columns: 1fr 1fr; }
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .actions button {
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font: inherit;
+    }
+    .btn-primary { background: #c41e3a; color: #fff; }
+    .btn-secondary { background: #e8e8e8; color: #222; }
+    .btn-danger { background: #b00020; color: #fff; }
+    .lista {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0 0;
+      max-height: 200px;
+      overflow: auto;
+      border: 1px solid #eee;
+      border-radius: 8px;
+    }
+    .lista li {
+      padding: 0.5rem 0.65rem;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.88rem;
+    }
+    .lista li:last-child { border-bottom: none; }
+    .msg {
+      margin-top: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .msg.ok { background: #e8f5e9; color: #1b5e20; }
+    .msg.err { background: #ffe8e8; color: #b00020; }
+    .pedido-resumo {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .pedido-resumo strong { color: #c41e3a; }
+  </style>
+</head>
+<body>
+  <h1>PizzJuca</h1>
+  <p class="sub">Gerencie pizzas e bebidas ou monte um pedido. <a href="cardapio.html">Ver só cardápio</a></p>
+
+  <div class="tabs" role="tablist">
+    <button type="button" class="active" data-tab="pizzas">Pizzas</button>
+    <button type="button" data-tab="bebidas">Bebidas</button>
+    <button type="button" data-tab="pedido">Pedido</button>
+  </div>
+
+  <div id="panel-pizzas" class="panel active">
+    <section class="box">
+      <h2>Pizzas — escolher e editar</h2>
+      <label for="sel-pizza">Carregar no formulário</label>
+      <select id="sel-pizza">
+        <option value="">— Novo cadastro —</option>
+      </select>
+      <ul id="lista-pizzas" class="lista" aria-label="Lista de pizzas"></ul>
+    </section>
+    <section class="box">
+      <h2>Formulário</h2>
+      <input type="hidden" id="pizza-id" value="" />
+      <label for="pizza-nome">Nome</label>
+      <input id="pizza-nome" type="text" autocomplete="off" />
+      <label for="pizza-ing">Ingredientes</label>
+      <textarea id="pizza-ing"></textarea>
+      <label for="pizza-valor">Valor (R$)</label>
+      <input id="pizza-valor" type="number" step="0.01" min="0" />
+      <div class="actions">
+        <button type="button" class="btn-secondary" id="pizza-novo">Novo</button>
+        <button type="button" class="btn-primary" id="pizza-salvar">Salvar</button>
+        <button type="button" class="btn-danger" id="pizza-excluir">Excluir</button>
+      </div>
+      <div id="msg-pizza" class="msg" hidden></div>
+    </section>
+  </div>
+
+  <div id="panel-bebidas" class="panel">
+    <section class="box">
+      <h2>Bebidas — escolher e editar</h2>
+      <label for="sel-bebida">Carregar no formulário</label>
+      <select id="sel-bebida">
+        <option value="">— Novo cadastro —</option>
+      </select>
+      <ul id="lista-bebidas" class="lista" aria-label="Lista de bebidas"></ul>
+    </section>
+    <section class="box">
+      <h2>Formulário</h2>
+      <input type="hidden" id="bebida-id" value="" />
+      <label for="bebida-nome">Nome</label>
+      <input id="bebida-nome" type="text" autocomplete="off" />
+      <label for="bebida-litros">Litros</label>
+      <input id="bebida-litros" type="number" step="any" min="0" />
+      <label for="bebida-valor">Valor (R$)</label>
+      <input id="bebida-valor" type="number" step="0.01" min="0" />
+      <div class="actions">
+        <button type="button" class="btn-secondary" id="bebida-novo">Novo</button>
+        <button type="button" class="btn-primary" id="bebida-salvar">Salvar</button>
+        <button type="button" class="btn-danger" id="bebida-excluir">Excluir</button>
+      </div>
+      <div id="msg-bebida" class="msg" hidden></div>
+    </section>
+  </div>
+
+  <div id="panel-pedido" class="panel">
+    <section class="box">
+      <h2>Monte o pedido</h2>
+      <p class="sub" style="margin-bottom:0.75rem">Escolha uma pizza e uma bebida (listas atualizadas do servidor).</p>
+      <div class="row cols-2">
+        <div>
+          <label for="ped-pizza">Pizza</label>
+          <select id="ped-pizza"><option value="">— Selecione —</option></select>
+        </div>
+        <div>
+          <label for="ped-bebida">Bebida</label>
+          <select id="ped-bebida"><option value="">— Selecione —</option></select>
+        </div>
+      </div>
+      <div id="pedido-resumo" class="pedido-resumo" style="margin-top:1rem"></div>
+    </section>
+  </div>
+
+  <script>
+    const fmtMoney = (n) =>
+      Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    let pizzasCache = [];
+    let bebidasCache = [];
+
+    async function parseResponse(r) {
+      const text = await r.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(text.slice(0, 200) || "Resposta inválida");
+      }
+      if (!r.ok) {
+        const m = data.message || data.Mensagem || "Erro " + r.status;
+        throw new Error(m);
+      }
+      return data;
+    }
+
+    function showMsg(elId, text, ok) {
+      const el = document.getElementById(elId);
+      el.hidden = false;
+      el.textContent = text;
+      el.className = "msg " + (ok ? "ok" : "err");
+    }
+
+    function hideMsg(elId) {
+      const el = document.getElementById(elId);
+      el.hidden = true;
+      el.textContent = "";
+    }
+
+    async function loadPizzas() {
+      const r = await fetch("api/pizza/getall.php");
+      const data = await parseResponse(r);
+      if (!Array.isArray(data)) throw new Error("Lista de pizzas inválida");
+      pizzasCache = data;
+      return data;
+    }
+
+    async function loadBebidas() {
+      const r = await fetch("api/bebidas/getall.php");
+      const data = await parseResponse(r);
+      if (!Array.isArray(data)) throw new Error("Lista de bebidas inválida");
+      bebidasCache = data;
+      return data;
+    }
+
+    function fillPizzaSelects(list) {
+      const sel = document.getElementById("sel-pizza");
+      const ped = document.getElementById("ped-pizza");
+      const keepPizza = sel.value;
+      const keepPed = ped.value;
+      sel.innerHTML = '<option value="">— Novo cadastro —</option>';
+      ped.innerHTML = '<option value="">— Selecione —</option>';
+      for (const p of list) {
+        const o = document.createElement("option");
+        o.value = String(p.id);
+        o.textContent = p.nome + " — " + fmtMoney(p.valor);
+        sel.appendChild(o);
+        const o2 = document.createElement("option");
+        o2.value = String(p.id);
+        o2.textContent = p.nome + " — " + fmtMoney(p.valor);
+        ped.appendChild(o2);
+      }
+      if ([...sel.options].some((o) => o.value === keepPizza)) sel.value = keepPizza;
+      if ([...ped.options].some((o) => o.value === keepPed)) ped.value = keepPed;
+
+      const ul = document.getElementById("lista-pizzas");
+      ul.innerHTML = "";
+      if (list.length === 0) {
+        ul.innerHTML = "<li>Nenhuma pizza.</li>";
+        return;
+      }
+      for (const p of list) {
+        const li = document.createElement("li");
+        li.textContent = p.nome + " — " + p.ingredientes + " — " + fmtMoney(p.valor);
+        ul.appendChild(li);
+      }
+    }
+
+    function fillBebidaSelects(list) {
+      const sel = document.getElementById("sel-bebida");
+      const ped = document.getElementById("ped-bebida");
+      const keepBeb = sel.value;
+      const keepPed = ped.value;
+      sel.innerHTML = '<option value="">— Novo cadastro —</option>';
+      ped.innerHTML = '<option value="">— Selecione —</option>';
+      for (const b of list) {
+        const o = document.createElement("option");
+        o.value = String(b.id);
+        o.textContent = b.nome + " (" + b.litros + " L) — " + fmtMoney(b.valor);
+        sel.appendChild(o);
+        const o2 = document.createElement("option");
+        o2.value = String(b.id);
+        o2.textContent = b.nome + " — " + fmtMoney(b.valor);
+        ped.appendChild(o2);
+      }
+      if ([...sel.options].some((o) => o.value === keepBeb)) sel.value = keepBeb;
+      if ([...ped.options].some((o) => o.value === keepPed)) ped.value = keepPed;
+
+      const ul = document.getElementById("lista-bebidas");
+      ul.innerHTML = "";
+      if (list.length === 0) {
+        ul.innerHTML = "<li>Nenhuma bebida.</li>";
+        return;
+      }
+      for (const b of list) {
+        const li = document.createElement("li");
+        li.textContent = b.nome + " — " + b.litros + " L — " + fmtMoney(b.valor);
+        ul.appendChild(li);
+      }
+    }
+
+    function clearPizzaForm() {
+      document.getElementById("pizza-id").value = "";
+      document.getElementById("sel-pizza").value = "";
+      document.getElementById("pizza-nome").value = "";
+      document.getElementById("pizza-ing").value = "";
+      document.getElementById("pizza-valor").value = "";
+    }
+
+    function clearBebidaForm() {
+      document.getElementById("bebida-id").value = "";
+      document.getElementById("sel-bebida").value = "";
+      document.getElementById("bebida-nome").value = "";
+      document.getElementById("bebida-litros").value = "";
+      document.getElementById("bebida-valor").value = "";
+    }
+
+    function applyPizzaFromSelect() {
+      const id = document.getElementById("sel-pizza").value;
+      if (!id) {
+        clearPizzaForm();
+        return;
+      }
+      const p = pizzasCache.find((x) => String(x.id) === id);
+      if (!p) return;
+      document.getElementById("pizza-id").value = id;
+      document.getElementById("pizza-nome").value = p.nome;
+      document.getElementById("pizza-ing").value = p.ingredientes;
+      document.getElementById("pizza-valor").value = p.valor;
+    }
+
+    function applyBebidaFromSelect() {
+      const id = document.getElementById("sel-bebida").value;
+      if (!id) {
+        clearBebidaForm();
+        return;
+      }
+      const b = bebidasCache.find((x) => String(x.id) === id);
+      if (!b) return;
+      document.getElementById("bebida-id").value = id;
+      document.getElementById("bebida-nome").value = b.nome;
+      document.getElementById("bebida-litros").value = b.litros;
+      document.getElementById("bebida-valor").value = b.valor;
+    }
+
+    function updatePedidoResumo() {
+      const pid = document.getElementById("ped-pizza").value;
+      const bid = document.getElementById("ped-bebida").value;
+      const out = document.getElementById("pedido-resumo");
+      if (!pid && !bid) {
+        out.innerHTML = "<span class=\"sub\">Selecione itens para ver o resumo e o total.</span>";
+        return;
+      }
+      const p = pid ? pizzasCache.find((x) => String(x.id) === pid) : null;
+      const b = bid ? bebidasCache.find((x) => String(x.id) === bid) : null;
+      let html = "";
+      if (p) {
+        html += "<div><strong>Pizza:</strong> " + escapeHtml(p.nome) + " — " + fmtMoney(p.valor) + "</div>";
+      }
+      if (b) {
+        html += "<div><strong>Bebida:</strong> " + escapeHtml(b.nome) + " — " + fmtMoney(b.valor) + "</div>";
+      }
+      const total = (p ? Number(p.valor) : 0) + (b ? Number(b.valor) : 0);
+      if (p || b) {
+        html += "<div style=\"margin-top:0.5rem\"><strong>Total:</strong> " + fmtMoney(total) + "</div>";
+      }
+      out.innerHTML = html;
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    async function refreshAll() {
+      try {
+        const [p, b] = await Promise.all([loadPizzas(), loadBebidas()]);
+        fillPizzaSelects(p);
+        fillBebidaSelects(b);
+        updatePedidoResumo();
+      } catch (e) {
+        showMsg("msg-pizza", e.message, false);
+        showMsg("msg-bebida", e.message, false);
+      }
+    }
+
+    document.querySelectorAll(".tabs button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tab = btn.getAttribute("data-tab");
+        document.querySelectorAll(".tabs button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+        document.getElementById("panel-" + tab).classList.add("active");
+      });
+    });
+
+    document.getElementById("sel-pizza").addEventListener("change", () => {
+      applyPizzaFromSelect();
+      hideMsg("msg-pizza");
+    });
+    document.getElementById("sel-bebida").addEventListener("change", () => {
+      applyBebidaFromSelect();
+      hideMsg("msg-bebida");
+    });
+    document.getElementById("ped-pizza").addEventListener("change", updatePedidoResumo);
+    document.getElementById("ped-bebida").addEventListener("change", updatePedidoResumo);
+
+    document.getElementById("pizza-novo").addEventListener("click", () => {
+      clearPizzaForm();
+      hideMsg("msg-pizza");
+    });
+    document.getElementById("bebida-novo").addEventListener("click", () => {
+      clearBebidaForm();
+      hideMsg("msg-bebida");
+    });
+
+    document.getElementById("pizza-salvar").addEventListener("click", async () => {
+      hideMsg("msg-pizza");
+      const id = document.getElementById("pizza-id").value.trim();
+      const nome = document.getElementById("pizza-nome").value.trim();
+      const ingredientes = document.getElementById("pizza-ing").value.trim();
+      const valor = parseFloat(document.getElementById("pizza-valor").value);
+      if (!nome || !ingredientes || Number.isNaN(valor)) {
+        showMsg("msg-pizza", "Preencha nome, ingredientes e valor válido.", false);
+        return;
+      }
+      try {
+        if (id) {
+          const r = await fetch("api/pizza/update.php", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: Number(id), nome, ingredientes, valor }),
+          });
+          await parseResponse(r);
+          showMsg("msg-pizza", "Pizza atualizada.", true);
+        } else {
+          const r = await fetch("api/pizza/create.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nome, ingredientes, valor }),
+          });
+          await parseResponse(r);
+          showMsg("msg-pizza", "Pizza criada.", true);
+        }
+        await refreshAll();
+        if (!id) clearPizzaForm();
+        else applyPizzaFromSelect();
+      } catch (e) {
+        showMsg("msg-pizza", e.message, false);
+      }
+    });
+
+    document.getElementById("pizza-excluir").addEventListener("click", async () => {
+      hideMsg("msg-pizza");
+      const id = document.getElementById("pizza-id").value.trim();
+      if (!id) {
+        showMsg("msg-pizza", "Selecione uma pizza para excluir.", false);
+        return;
+      }
+      if (!confirm("Excluir esta pizza?")) return;
+      try {
+        const r = await fetch("api/pizza/delete.php?id=" + encodeURIComponent(id), { method: "DELETE" });
+        await parseResponse(r);
+        showMsg("msg-pizza", "Pizza removida.", true);
+        clearPizzaForm();
+        await refreshAll();
+      } catch (e) {
+        showMsg("msg-pizza", e.message, false);
+      }
+    });
+
+    document.getElementById("bebida-salvar").addEventListener("click", async () => {
+      hideMsg("msg-bebida");
+      const id = document.getElementById("bebida-id").value.trim();
+      const nome = document.getElementById("bebida-nome").value.trim();
+      const litros = document.getElementById("bebida-litros").value;
+      const valor = parseFloat(document.getElementById("bebida-valor").value);
+      if (!nome || litros === "" || Number.isNaN(valor)) {
+        showMsg("msg-bebida", "Preencha nome, litros e valor válido.", false);
+        return;
+      }
+      try {
+        if (id) {
+          const r = await fetch("api/bebidas/update.php", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: Number(id),
+              nome,
+              litros: parseFloat(litros),
+              valor,
+            }),
+          });
+          await parseResponse(r);
+          showMsg("msg-bebida", "Bebida atualizada.", true);
+        } else {
+          const r = await fetch("api/bebidas/create.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nome,
+              litros: parseFloat(litros),
+              valor,
+            }),
+          });
+          await parseResponse(r);
+          showMsg("msg-bebida", "Bebida criada.", true);
+        }
+        await refreshAll();
+        if (!id) clearBebidaForm();
+        else applyBebidaFromSelect();
+      } catch (e) {
+        showMsg("msg-bebida", e.message, false);
+      }
+    });
+
+    document.getElementById("bebida-excluir").addEventListener("click", async () => {
+      hideMsg("msg-bebida");
+      const id = document.getElementById("bebida-id").value.trim();
+      if (!id) {
+        showMsg("msg-bebida", "Selecione uma bebida para excluir.", false);
+        return;
+      }
+      if (!confirm("Excluir esta bebida?")) return;
+      try {
+        const r = await fetch("api/bebidas/delete.php?id=" + encodeURIComponent(id), { method: "DELETE" });
+        await parseResponse(r);
+        showMsg("msg-bebida", "Bebida removida.", true);
+        clearBebidaForm();
+        await refreshAll();
+      } catch (e) {
+        showMsg("msg-bebida", e.message, false);
+      }
+    });
+
+    refreshAll();
+  </script>
+</body>
+</html>

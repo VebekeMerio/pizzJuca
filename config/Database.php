@@ -23,7 +23,7 @@ class Database # definição da classe Database
         try {
 
             # string de conexão com o banco de dados usando o formato DSN (Data Source Name)
-            $dsn = 'mysql:host' . $this->host . ';port=' . $this->port . ';dbname=' . $this->db_name . ';charset=utf8'; #adiciona o charset utf8 à string de conexão
+            $dsn = 'mysql:host=' . $this->host . ';port=' . $this->port . ';dbname=' . $this->db_name . ';charset=utf8'; #adiciona o charset utf8 à string de conexão
 
             # Instancia a classe PDO para estabelecer a conexão com o banco de dados usando as informações fornecidas
             $this->conn = new PDO($dsn, $this->username, $this->password);
