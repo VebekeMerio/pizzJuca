@@ -5,7 +5,7 @@ class Database # definição da classe Database
 {
     // variáveis privadas para armazenar as informações de conexão com o banco de dados
     private $host = 'localhost';
-    private $db_name = 'pizzjucadb2';
+    private $db_name = 'pizzahut';
     private $username = 'root';
     private $password = 'usbw';
     private $port = '3307';

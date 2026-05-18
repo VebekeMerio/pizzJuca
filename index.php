@@ -1,15 +1,6 @@
 <?php
-
-header("Access-Control-Allow-Origin: *");
+header("access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-
-echo json_encode([
-<<<<<<< HEAD
-    "message" => "Bemm 'Vindo ao PizzaH Hut API!'"
-]);
-
-=======
-    "message" => "Lorem ipsum dolor"
-]);
->>>>>>> 2c7687bffaa857d22cfe24c230b863ad5ea9069e
+header("access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+// tbm pode usar: echo json_encode(["Mensagem" => "Hello World! Bem Vindos à Pizzaria do Juca"]);
+echo json_encode(array("Mensagem" => "Hello World! Bem Vindos ao PIZZAH HUT"));

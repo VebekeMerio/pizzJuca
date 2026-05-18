@@ -13,7 +13,7 @@ $pass = "";
     
 
     // GET ALL bebidas
-    $sql = "SELECT * FROM pizza";
+    $sql = "SELECT * FROM bebidas";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
 

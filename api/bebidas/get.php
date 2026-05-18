@@ -12,27 +12,26 @@ include_once '../../models/Bebidas.php';
 $database = new Database();
 $db = $database->getConnection();
  
-// Instanciar o objeto Pizza
-$bebidas = new Bebidas($db);
+// Instanciar o objeto Bebidas
  
 $bebidas->idBebidas = isset($_GET['id']) ? $_GET['id'] : null;
  
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($bebidas->idBebidas) {
-        // Busca a pizza
+    if ($bebidas->idBbebidas) {
+        // Busca a bebidas
         $bebidas->get();
  
         // Cria o array de resposta
-            $bebida_arr = array(
+        $bebidas_arr = array(
             "id" => $bebidas->idBebidas,
             "nome" => $bebidas->nome,
-            "litros" => $bebidas->litros,
-            "valor" => $bebidas->valor
+            "ingredientes" => $pizza->ingredientes,
+            "valor" => $pizza->valor
         );
  
         // Converte para JSON e envia a resposta
         // `JSON_PRETTY_PRINT` é opcional, mas deixa o JSON mais legível
-        echo json_encode($bebida_arr, JSON_PRETTY_PRINT);
+        echo json_encode($bebidas_arr, JSON_PRETTY_PRINT);
     } else {
  
  

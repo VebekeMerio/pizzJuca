@@ -16,7 +16,7 @@ class Bebidas {
     // método para obter todas as pizzas do banco de dados
     public function getall(){
 
-        // consulta SQL para selecionar os campos idPizza, nome, ingredientes e valor da tabela de pizzas
+        // consulta SQL para selecionar os campos idBbebidas, nome, ingredientes e valor da tabela de pizzas
         $query ="SELECT idBebidas, nome, litros, valor FROM " . $this->tabela;
         // prepara a consulta SQL usando a conexão com o banco de dados e executa a consulta, retornando o resultado
         $stmt = $this->conn->prepare($query);

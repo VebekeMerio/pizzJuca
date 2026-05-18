@@ -16,16 +16,36 @@ class Pizza {
 
     // método para obter todas as pizzas do banco de dados
     public function getall(){
-
-        // consulta SQL para selecionar os campos idPizza, nome, ingredientes e valor da tabela de pizzas
-        $query ="SELECT idPizza, nome, ingredientes, valor FROM " . $this->tabela;
-        // prepara a consulta SQL usando a conexão com o banco de dados e executa a consulta, retornando o resultado
+models\Pizza.php
+ 
+  public function update() {
+        // Query de atualização
+        $query = 'UPDATE ' . $this->tabela . ' SET nome=:nome, ingredientes=:ingredientes, valor=:valor WHERE idPizza=:id';
+ 
+        // Preparar a query
         $stmt = $this->conn->prepare($query);
-        // executa a consulta SQL preparada
-        $stmt->execute();
-        // retorna o resultado da consulta SQL, que é um objeto PDOStatement contendo as linhas selecionadas da tabela de pizzas
-        return $stmt;
+ 
+        // Limpar os dados
+        $this->nome = htmlspecialchars(strip_tags($this->nome));
+        $this->ingredientes = htmlspecialchars(strip_tags($this->ingredientes));
+        $this->valor = htmlspecialchars(strip_tags($this->valor));
+        $this->idPizza = htmlspecialchars(strip_tags($this->idPizza));
+ 
+        // Vincular os parâmetros
+        $stmt->bindParam(':nome', $this->nome);
+        $stmt->bindParam(':ingredientes', $this->ingredientes);
+        $stmt->bindParam(':valor', $this->valor);
+        $stmt->bindParam(':id', $this->idPizza);
+ 
+        // Executar a query
+        if($stmt->execute()) {
+            return true;
+        }
+     
+        return false;
     }
+ 
+ 
 
 // método para obter uma pizza específica do banco de dados com base no idPizza
 public function get() {
@@ -66,16 +86,36 @@ public function get() {
     }
 
     public function update() {
-        $query = "UPDATE " . $this->tabela . "
-            SET nome = :nome, ingredientes = :ingredientes, valor = :valor
-            WHERE idPizza = :id";
+        models\Pizza.php
+ 
+  public function update() {
+        // Query de atualização
+        $query = 'UPDATE ' . $this->tabela . ' SET nome=:nome, ingredientes=:ingredientes, valor=:valor WHERE idPizza=:id';
+ 
+        // Preparar a query
         $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':nome', $this->nome);
-        $stmt->bindValue(':ingredientes', $this->ingredientes);
-        $stmt->bindValue(':valor', $this->valor);
-        $stmt->bindValue(':id', $this->idPizza);
-        $stmt->execute();
-        return $stmt->rowCount() > 0;
+ 
+        // Limpar os dados
+        $this->nome = htmlspecialchars(strip_tags($this->nome));
+        $this->ingredientes = htmlspecialchars(strip_tags($this->ingredientes));
+        $this->valor = htmlspecialchars(strip_tags($this->valor));
+        $this->idPizza = htmlspecialchars(strip_tags($this->idPizza));
+ 
+        // Vincular os parâmetros
+        $stmt->bindParam(':nome', $this->nome);
+        $stmt->bindParam(':ingredientes', $this->ingredientes);
+        $stmt->bindParam(':valor', $this->valor);
+        $stmt->bindParam(':id', $this->idPizza);
+ 
+        // Executar a query
+        if($stmt->execute()) {
+            return true;
+        }
+     
+        return false;
+    }
+ 
+ 
     }
 
     public function delete() {

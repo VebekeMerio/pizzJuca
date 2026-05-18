@@ -19,9 +19,9 @@ include_once '../../config/Database.php';
 include_once '../../models/Bebidas.php';
 
 $data = json_decode(file_get_contents("php://input"));
-if (!$data || !isset($data->nome, $data->litros, $data->valor)) {
+if (!$data || !isset($data->nome, $data->ingredientes, $data->valor)) {
     http_response_code(400);
-    echo json_encode(["message" => "Envie JSON com nome, litros e valor."]);
+    echo json_encode(["message" => "Envie JSON com nome, ingredientes e valor."]);
     exit;
 }
 
@@ -33,21 +33,21 @@ if (!$db) {
     exit;
 }
 
-$bebida = new Bebidas($db);
-$bebida->nome = $data->nome;
-$bebida->litros = $data->litros;
-$bebida->valor = $data->valor;
+$bebidas = new Bebidas($db);
+$bebidas->nome = $data->nome;
+$bebidas->ingredientes = $data->ingredientes;
+$bebidas->valor = $data->valor;
 
-if ($bebida->create()) {
+if ($bebidas->create()) {
     http_response_code(201);
     echo json_encode([
-        "message" => "Bebida criada.",
-        "id" => (int) $bebida->idBebidas,
-        "nome" => $bebida->nome,
-        "litros" => $bebida->litros,
-        "valor" => (float) $bebida->valor,
+        "message" => "Bebidas criada.",
+        "id" => (int) $bebidas->idBebidas,
+        "nome" => $bebidas->nome,
+        "ingredientes" => $pizza->ingredientes,
+        "valor" => (float) $bebidas->valor,
     ]);
 } else {
     http_response_code(500);
-    echo json_encode(["message" => "Não foi possível criar a bebida."]);
+    echo json_encode(["message" => "Não foi possível criar a bebidas."]);
 }

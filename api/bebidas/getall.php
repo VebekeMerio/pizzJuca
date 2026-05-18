@@ -1,5 +1,5 @@
 <?php
-// api/pizza/read.php
+// api/bebidas/read.php
  
 // Headers obrigatórios
 header("Access-Control-Allow-Origin: *");
@@ -17,7 +17,7 @@ $db = $database->getConnection();
 $bebidas = new Bebidas($db);
  
 // try{ colocar para demonstrar erro com coluna errada mas lá no método read em pizza
-    // Chamar o método read() para buscar as pizzas
+    // Chamar o método read() para buscar as bebidas
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt = $bebidas->getall();
     $num = $stmt->rowCount();
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Verificar se mais de 0 registros foram encontrados
     if ($num > 0) {
 
-        // Array de pizzas
+        // Array de bebidas
         $bebidas_arr = array();
  
         // Percorrer o resultado da consulta
@@ -35,15 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             extract($row);
 
             // Criar um array associativo para cada pizza encontrada
-                $bebida_item = array(
+            $bebidas_item = array(
                 "id" => $idBebidas, 
                 "nome" => $nome,
-                "litros" => $litros,
+                "ingredientes" => $ingredientes,
                 "valor" => $valor
             );
 
-            // Adicionar o array associativo da bebida ao array de bebidas
-            array_push($bebidas_arr, $bebida_item);
+            // Adicionar o array associativo da bebidasao array de bebidas
+            array_push($bebidas_arr, $bebidas_item);
         }
  
         // Definir o código de resposta como 200 OK
@@ -52,12 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Mostrar os dados das bebidas em formato JSON
         echo json_encode($bebidas_arr);
     } else {
-        // Se nenhuma bebida for encontrada, definir o código de resposta como 404 Not Found
+        // Se nenhuma  bebidasfor encontrada, definir o código de resposta como 404 Not Found
         http_response_code(404);
  
-        // Informar ao usuário que nenhuma bebida foi encontrada
+        // Informar ao usuário que nenhuma bebidas foi encontrada
         echo json_encode(
-            array("message" => "Nenhuma bebida encontrada.")
+            array("message" => "Nenhuma bebidas encontrada.")
         );
     }
 } else {
