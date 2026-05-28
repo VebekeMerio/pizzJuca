@@ -1,0 +1,17 @@
+{
+    "name": "vebeke.aahanashiro/pizzahhut",
+    "description": "projeto pedagógico sobra api's",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "VebekeAahanashiro\\Pizzahhut\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "VebekeMerio",
+            "email": "vebekehanashiro@gmail.com"
+        }
+    ],
+    "require": {}
+}

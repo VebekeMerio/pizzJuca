@@ -1,6 +1,13 @@
 <?php
 
 // config/Database.php
+
+namespace VebekeAahanashiro\Pizzahhut\Config;
+
+use PDO;
+use PDOException;
+use Throwrable;
+
 class Database # definição da classe Database
 {
     // variáveis privadas para armazenar as informações de conexão com o banco de dados

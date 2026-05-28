@@ -1,5 +1,9 @@
 <?php
 
+namespace VebekeAahanashiro\Pizzahhut\Models;
+
+use PDO;
+
 class Pizza {
  
     private $conn;
