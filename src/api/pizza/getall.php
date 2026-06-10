@@ -8,8 +8,8 @@ header("Content-Type: application/json; charset=UTF-8");
 // Incluir arquivos de banco de dados e modelo
 //include_once '../../config/Database.php';
 //include_once '../../models/Pizza.php';
-
 require_DIR_. '/../../../vendor/autoload.php';
+
  use VebekeAahanashiro\Pizzahhut\Config\Database;
  use VebekeAahanashiro\Pizzahhut\Models\Pizza;
 
